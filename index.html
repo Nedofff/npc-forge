@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101719">
+  <meta name="description" content="Кузница NPC — быстрый генератор живых персонажей для D&D и фэнтези-настолок. Манеры, голоса, тайны, реакции и экспорт в Obsidian.">
+  <title>Кузница NPC — персонажи за 10 секунд</title>
+
+  <style>
+:root {
+  color-scheme: dark;
+  --bg: #0e1517;
+  --bg-2: #111b1d;
+  --panel: #182326;
+  --card: #1c282a;
+  --card-deep: #162123;
+  --line: #344044;
+  --soft-line: #2a363a;
+  --text: #e8e5da;
+  --muted: #a0aaa8;
+  --dim: #748480;
+  --gold: #dbb575;
+  --gold-pale: #f0d5a0;
+  --gold-dark: #5f4c30;
+  --green: #9bbca4;
+  --red: #e5a39b;
+  --serif: Georgia, 'Times New Roman', serif;
+  --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+}
+* {box-sizing: border-box;}
+html {scroll-behavior: smooth;}
+body {margin:0; background:radial-gradient(circle at 85% 8%,#1a2625 0,transparent 42%),radial-gradient(circle at 0 55%,#1d2525 0,transparent 37%),var(--bg);color:var(--text);font:14px/1.55 var(--sans);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(#d9c7a205 1px,transparent 1px),linear-gradient(90deg,#d9c7a205 1px,transparent 1px);background-size:52px 52px;pointer-events:none;z-index:-1}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;color:inherit}
+button:disabled{opacity:.48;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+a{color:inherit;text-decoration:none}
+.site-shell{max-width:1450px;padding:0 46px;margin:0 auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:90px;border-bottom:1px solid var(--soft-line)}
+.brand{display:flex;align-items:center;gap:13px}.brand-mark{width:43px;height:43px;border:1px solid var(--gold-dark);border-radius:10px;color:var(--gold);display:grid;place-items:center;font-size:27px;line-height:1;background:#2d2a23}.brand strong{display:block;font-size:17px;letter-spacing:1.9px;line-height:1.2}.brand strong span{color:var(--gold)}.brand small{display:block;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin-top:4px;font-weight:700}
+.topbar-actions{display:flex;align-items:center;gap:22px}.header-link{background:none;border:0;padding:10px 0;color:#c4cecb;font-size:12px;font-weight:700;white-space:nowrap}.header-link:hover{color:var(--gold)}.header-link span{color:var(--gold)}.offline-pill{display:flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid #38524a;background:#1b2c29;border-radius:40px;font-size:11px;white-space:nowrap;color:#a5c5b2}.tiny-dot{width:6px;height:6px;border-radius:50%;background:#9bcaaa;box-shadow:0 0 8px #7bc59a}
+.intro{padding:56px 0 36px}.eyebrow,.overline{font-size:10px;letter-spacing:2.5px;color:var(--gold);font-weight:800}.eyebrow{display:flex;align-items:center;gap:12px}.eyebrow-line{display:inline-block;height:1px;width:24px;background:var(--gold)}h1,h2,h3,p{margin:0}h1{font:normal clamp(29px,3.35vw,48px)/1.19 var(--serif);letter-spacing:-.8px;max-width:1050px;margin-top:16px}h1 em{font-style:normal;color:var(--gold-pale)}.intro p{color:#b3bdb8;font-size:14px;margin-top:17px;max-width:780px}
+.forge-panel{border:1px solid #4b4a3e;background:linear-gradient(110deg,#202b2b,#1b2728 70%,#202926);padding:25px 27px 20px;border-radius:12px;box-shadow:0 16px 45px #00000018}.forge-title{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:17px}.forge-title strong{font:normal 19px/1.3 var(--serif)}.filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:13px}.filters label{font-size:11px;font-weight:700;color:#a4afab;display:grid;gap:8px;min-width:0}.filters select{height:42px;border:1px solid #425054;background-color:#132023;color:var(--text);border-radius:6px;padding:0 12px;width:100%;font-size:12px;min-width:0;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23d5b778' stroke-width='1.5'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");background-position:right 9px center;background-repeat:no-repeat;padding-right:30px}.filters select:hover{border-color:#81714e}.filters select option{background:#142022}
+.forge-footer{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:19px;padding-top:18px;border-top:1px solid #3a4444}.forge-hint{font-size:12px;color:#929f9c}.forge-hint>span{color:var(--gold);margin-right:5px}.forge-hint em{font-style:normal;color:#d1d2c6}
+.btn{border:1px solid transparent;border-radius:7px;min-height:41px;padding:11px 15px;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:10px;transition:background .16s,border-color .16s,transform .16s;white-space:nowrap}.btn:active{transform:translateY(1px)}.btn-primary{background:var(--gold);color:#1c211e;border-color:var(--gold)}.btn-primary:hover{background:#edcb91}.btn-secondary{background:#233035;border-color:#465458;color:#e0e5df}.btn-secondary:hover{background:#304043;border-color:#89968d}.btn-ghost{background:none;border-color:#3f4a4b;color:#bec7c2}.btn-ghost:hover{background:#283436}.btn.is-saved{color:var(--gold-pale);border-color:#6d5b3f;background:#362f25}.btn-die{font-size:18px}.key{font-size:10px;border:1px solid #766847;padding:0 5px;border-radius:3px;opacity:.75;font-weight:500}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:28px;margin-top:39px;align-items:start}.stage-overline{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:0 4px}.gen-status{font-size:10px;letter-spacing:1.2px;color:var(--green);font-weight:800}.character-card{border:1px solid var(--line);background:linear-gradient(150deg,#1c282a,#192427 54%,#1b2728);border-radius:12px;overflow:hidden;box-shadow:0 22px 54px #00000026}.npc-hero{padding:30px 32px 25px;position:relative;border-bottom:1px solid #3a4948;background:radial-gradient(circle at 93% -45%,#745d2f33 0,transparent 50%),radial-gradient(circle at 1% 100%,#43635a17 0,transparent 40%)}.npc-hero::after{content:'✦';position:absolute;right:25px;top:15px;color:#a17c4233;font-size:100px;line-height:1;pointer-events:none}.npc-hero-main{display:flex;align-items:center;gap:20px;position:relative;z-index:1}.avatar{width:84px;height:95px;min-width:84px;border-radius:5px 20px 5px 5px;display:grid;place-items:center;background:linear-gradient(145deg,#514938,#2a3531);border:1px solid #716647;position:relative;color:#e6c58c;font:normal 30px var(--serif);box-shadow:inset 0 0 0 5px #ffffff06}.avatar::after{content:'';position:absolute;inset:7px;border:1px solid #c7a86b44;pointer-events:none;border-radius:2px 14px 2px 2px}.name-wrap{min-width:0;flex:1}.role-marker{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:800;margin-bottom:4px}.npc-name{font:normal clamp(27px,3vw,39px)/1.15 var(--serif);word-break:break-word;letter-spacing:-.3px}.npc-meta{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:11px}.npc-meta span{color:#bbc5c0;border:1px solid #44544e;border-radius:4px;padding:4px 8px;font-size:11px;background:#14212480}.npc-summary{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:13px;margin-top:27px}.summary-tile{background:#121e207d;border:1px solid #334041;border-radius:6px;padding:12px 13px;min-width:0}.summary-tile small{display:block;color:#8fa49a;font-size:10px;text-transform:uppercase;letter-spacing:1.3px;margin-bottom:5px;font-weight:800}.summary-tile strong{display:block;font-weight:600;font-size:12px;color:#ece6d9;line-height:1.5}
+.npc-section{padding:23px 32px 25px;border-bottom:1px solid var(--soft-line)}.npc-section:last-child{border-bottom:0}.section-head{display:flex;align-items:center;gap:11px;justify-content:space-between;margin-bottom:17px}.section-heading{display:flex;gap:11px;align-items:baseline;min-width:0}.section-no{color:var(--gold);font:normal 14px var(--serif)}.section-heading h3{font:normal 22px var(--serif);color:#ede8dc}.section-actions{display:flex;gap:5px}.small-icon-btn{width:32px;height:32px;border:1px solid #3b4949;border-radius:6px;display:grid;place-items:center;background:#182426;color:#9eb3a9;font-size:17px;line-height:1}.small-icon-btn:hover{color:var(--gold);border-color:#7c6c4c}.small-icon-btn.locked{color:var(--gold);border-color:#93784b;background:#393327}.small-icon-btn svg{width:16px;height:16px}.description{color:#c9d2cb;font-size:13px;line-height:1.7}.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 25px}.feature-grid .full{grid-column:1/-1}.detail-label{font-size:10px;font-weight:800;letter-spacing:1.4px;color:#8da399;text-transform:uppercase;margin-bottom:5px}.detail-value{font-size:13px;line-height:1.65;color:#e0e2d7}.detail-value strong{color:#f1ddaf;font-weight:700}.voice-quote{margin-top:20px;background:#132021;border-left:2px solid var(--gold);border-radius:0 7px 7px 0;padding:17px 19px 16px;font:italic 19px/1.4 var(--serif);color:#f1e5cc}.quote-caption{font:normal 10px/1.5 var(--sans);letter-spacing:1.5px;text-transform:uppercase;color:#91a499;display:block;margin-top:10px}.reaction-menu{display:flex;flex-wrap:wrap;gap:7px}.reaction-chip{border:1px solid #465351;color:#bfccc4;border-radius:40px;background:transparent;padding:7px 12px;font-size:11px;font-weight:700}.reaction-chip:hover,.reaction-chip.active{background:#3b372b;border-color:#b99359;color:#f5ddac}.reaction-result{margin-top:13px;border:1px solid #3a4943;background:#142122;padding:15px;border-radius:7px;color:#d7ded4;font-size:13px;line-height:1.7;min-height:82px}.reaction-result b{color:var(--gold-pale)}.dm-note{margin-top:12px;color:#8fa29a;font-size:11px}.notes-area{width:100%;min-height:96px;resize:vertical;border:1px solid #40504d;border-radius:7px;background:#101c1e;color:#e6e7dd;padding:12px;outline:0}.notes-area::placeholder{color:#748581}.notes-caption{font-size:11px;color:#95a29a;margin-top:8px}
+.card-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.card-actions .btn:first-child{min-width:130px}.shortcut-help{font-size:11px;color:#869893;line-height:1.8;margin:14px 1px 0}.shortcut-help kbd{border:1px solid #4c5656;padding:1px 5px;border-radius:3px;color:#c6cfc7;font-family:inherit}
+.sidebar{border:1px solid var(--line);border-radius:11px;background:linear-gradient(160deg,#1b282a,#162123);overflow:hidden}.library-header{display:flex;align-items:center;justify-content:space-between;padding:24px 22px 16px}.library-header h2{font:normal 22px var(--serif);margin-top:6px}.library-count{background:#34392f;color:var(--gold);border:1px solid #62573b;padding:3px 8px;border-radius:30px;font-weight:700;font-size:11px}.tabbar{display:flex;border-bottom:1px solid #465150;padding:0 22px;gap:19px}.tab{border:0;border-bottom:2px solid transparent;background:none;color:#91a29d;padding:10px 0 11px;font-weight:700;font-size:12px}.tab.active{border-bottom-color:var(--gold);color:#f0e5d1}.search-label{display:flex;align-items:center;gap:7px;margin:18px 20px 8px;border:1px solid #3c4d4b;border-radius:6px;background:#122021;color:var(--gold);padding:0 10px}.search-label span{font-size:25px;line-height:1}.search-label input{width:100%;height:38px;border:0;background:none;color:var(--text);font-size:12px;outline:0}.search-label input::placeholder{color:#81918d}.library-list{min-height:190px;max-height:530px;overflow:auto;padding:4px 12px 18px}.library-item{display:flex;align-items:center;gap:8px;padding:12px 8px 12px 10px;border-bottom:1px solid #30413e}.library-item:hover{background:#263332}.library-char{width:33px;height:38px;flex:0 0 auto;border:1px solid #796c48;color:var(--gold);background:#35352c;display:grid;place-items:center;border-radius:4px;font:normal 14px var(--serif)}.library-link{flex:1;min-width:0;background:none;border:0;text-align:left;padding:0;display:grid;gap:1px}.library-link strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;font-weight:750;color:#e8e9dc}.library-link small{color:#92a39b;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.library-link:hover strong{color:var(--gold)}.library-delete{border:1px solid transparent;background:none;padding:5px;color:#81918b;font-size:17px;border-radius:5px}.library-delete:hover{color:#e6a49d;border-color:#68413c}.empty-state{text-align:center;padding:27px 15px;color:#a8b5ac}.empty-state .empty-symbol{font:normal 40px var(--serif);color:#8b7650}.empty-state strong{display:block;color:#dfdfd2;font:normal 18px var(--serif);margin:8px 0 5px}.empty-state p{font-size:12px;line-height:1.6}.sidebar-footnote{border-top:1px solid #364541;padding:18px 22px;color:#95a69e;font-size:11px;line-height:1.7}.sidebar-footnote strong{color:#c7d2c9}.sidebar-tip{border-top:1px solid #364541;background:#212a27;padding:22px}.sidebar-tip-label{font-size:10px;color:var(--gold);letter-spacing:1.7px;font-weight:800}.sidebar-tip p{margin-top:10px;color:#c6ccc0;font:italic 15px/1.65 var(--serif)}
+.footer{display:flex;justify-content:space-between;gap:20px;padding:36px 0 28px;margin-top:42px;border-top:1px solid var(--soft-line);font-size:11px;color:#718680}.toast{position:fixed;z-index:100;bottom:25px;left:50%;transform:translate(-50%,18px);opacity:0;pointer-events:none;border:1px solid #7f6c47;background:#282d28;padding:11px 20px;color:#f5e7c8;border-radius:8px;box-shadow:0 12px 45px #0009;font-size:13px;font-weight:600;transition:opacity .17s,transform .17s}.toast.visible{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1240px){.site-shell{padding:0 28px}.filters{grid-template-columns:repeat(3,minmax(0,1fr))}.workspace{grid-template-columns:minmax(0,1fr) 290px;gap:20px}.npc-hero,.npc-section{padding-left:24px;padding-right:24px}.topbar-actions{gap:14px}}
+@media(max-width:900px){.workspace{grid-template-columns:1fr}.sidebar{max-width:none}.library-list{max-height:360px}.intro{padding-top:40px}.topbar{min-height:76px}.offline-pill{display:none}.sidebar-tip{display:none}}
+@media(max-width:620px){.site-shell{padding:0 15px}.topbar{gap:8px}.brand{gap:8px}.brand-mark{width:34px;height:36px;font-size:23px}.brand strong{font-size:12px;letter-spacing:.8px}.brand small{font-size:8px;letter-spacing:1px}.topbar-actions{gap:9px}.header-link{font-size:10px}.header-link span{display:none}.intro{padding:34px 1px 29px}.intro h1{font-size:29px}.intro h1 br{display:none}.intro p{font-size:13px}.forge-panel{padding:18px 15px}.forge-title{align-items:flex-start;flex-direction:column;gap:4px}.forge-title strong{font-size:21px}.filters{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.forge-footer{flex-direction:column;align-items:stretch}.forge-hint{font-size:11px}.generate-top{width:100%}.workspace{margin-top:29px}.npc-hero{padding:20px 15px}.npc-hero-main{gap:13px}.avatar{width:60px;height:72px;min-width:60px;font-size:22px}.npc-name{font-size:27px}.role-marker{font-size:9px}.npc-summary{grid-template-columns:1fr;gap:7px;margin-top:17px}.summary-tile{padding:9px 11px}.summary-tile strong{font-size:12px}.npc-section{padding:20px 16px}.section-heading h3{font-size:21px}.feature-grid{grid-template-columns:1fr;gap:13px}.feature-grid .full{grid-column:auto}.voice-quote{font-size:17px}.card-actions{display:grid;grid-template-columns:1fr 1fr}.card-actions .btn{white-space:normal;font-size:11px;padding:9px}.footer{flex-direction:column;gap:6px;padding-bottom:20px}.shortcut-help{font-size:10px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+
+</style>
+
+
+</head>
+<body>
+  <div class="site-shell">
+    <header class="topbar">
+      <a href="./" class="brand" aria-label="Кузница NPC, главная">
+        <span class="brand-mark" aria-hidden="true">⚄</span>
+        <span><strong>КУЗНИЦА <span>NPC</span></strong><small>Инструмент мастера</small></span>
+      </a>
+      <div class="topbar-actions">
+        <span class="offline-pill"><span class="tiny-dot"></span> Без сервера и аккаунта</span>
+        <button class="header-link" id="exportAllBtn" title="Резервная копия сохранённых NPC">Экспорт базы <span aria-hidden="true">↗</span></button>
+        <button class="header-link" id="importBtn" title="Загрузить ранее сохранённую базу">Импорт <span aria-hidden="true">↓</span></button>
+        <input type="file" accept="application/json,.json" id="importFile" hidden>
+      </div>
+    </header>
+
+    <main class="page-main">
+      <section class="intro" aria-labelledby="intro-title">
+        <div class="eyebrow"><span class="eyebrow-line"></span> НИКАКИХ ПУСТЫХ БОЛВАНЧИКОВ</div>
+        <h1 id="intro-title">Игроки докопались до случайного прохожего?<br><em>Теперь у него есть характер.</em></h1>
+        <p>Сгенерируй NPC прямо за столом: как он выглядит, разговаривает, чего хочет и как реагирует на выходки партии.</p>
+      </section>
+
+      <section class="forge-panel" aria-label="Параметры генератора">
+        <div class="forge-title"><span class="overline">01 / НАСТРОЙКА</span><strong>Кого встретили герои?</strong></div>
+        <div class="filters">
+          <label>Где встретили?<select id="sceneFilter"></select></label>
+          <label>Профессия<select id="roleFilter"></select></label>
+          <label>Народ<select id="speciesFilter"></select></label>
+          <label>Пол<select id="genderFilter"><option value="any">Случайный</option><option value="m">Мужчина</option><option value="f">Женщина</option></select></label>
+          <label>Атмосфера<select id="toneFilter"><option value="grim">Мрачное фэнтези</option><option value="classic">Классическое фэнтези</option><option value="strange">Мистика и странности</option></select></label>
+          <label>Чудаковатость<select id="weirdFilter"><option value="low">Сдержанная</option><option value="medium" selected>Умеренная</option><option value="high">Безумная</option></select></label>
+        </div>
+        <div class="forge-footer">
+          <div class="forge-hint"><span aria-hidden="true">✦</span> Не все NPC должны быть особенными. Зато каждый может быть <em>разным</em>.</div>
+          <button type="button" class="btn btn-primary generate-top" id="generateBtn"><span class="btn-die" aria-hidden="true">⚄</span> Сгенерировать NPC <span class="key">N</span></button>
+        </div>
+      </section>
+
+      <div class="workspace">
+        <section class="npc-stage" aria-label="Карточка персонажа">
+          <div class="stage-overline"><span class="overline">02 / ПЕРСОНАЖ</span><span id="genStatus" class="gen-status">ГОТОВ К ИГРЕ</span></div>
+
+          <article id="characterCard" class="character-card" aria-live="polite"></article>
+
+          <div class="card-actions">
+            <button class="btn btn-primary" id="generateAgainBtn"><span aria-hidden="true">⚄</span> Новый NPC</button>
+            <button class="btn btn-secondary" id="saveBtn"><span aria-hidden="true">☆</span> Сохранить</button>
+            <button class="btn btn-secondary" id="copyBtn"><span aria-hidden="true">▤</span> Скопировать Markdown</button>
+            <button class="btn btn-ghost" id="mdBtn"><span aria-hidden="true">↓</span> .md</button>
+          </div>
+          <p class="shortcut-help">Совет: <kbd>N</kbd> — новый NPC. <span aria-hidden="true">🔒</span> замочек закрепляет нужную часть при следующей генерации. Двойной кубик <span aria-hidden="true">⟳</span> меняет только одну часть.</p>
+        </section>
+
+        <aside class="sidebar" aria-label="Сохранённые персонажи и история">
+          <div class="library-header">
+            <div><span class="overline">03 / АРХИВ</span><h2>Твои персонажи</h2></div>
+            <span class="library-count" id="libraryCount">0</span>
+          </div>
+          <div class="tabbar" role="tablist" aria-label="Архив">
+            <button role="tab" aria-selected="true" aria-controls="libraryList" id="tabSaved" class="tab active">Сохранённые</button>
+            <button role="tab" aria-selected="false" aria-controls="libraryList" id="tabHistory" class="tab">История</button>
+          </div>
+          <label class="search-label"><span aria-hidden="true">⌕</span><input id="librarySearch" type="search" placeholder="Поиск по имени или роли" autocomplete="off" aria-label="Поиск по NPC"></label>
+          <div id="libraryList" class="library-list" role="tabpanel" aria-labelledby="tabSaved"></div>
+          <div class="sidebar-footnote"><strong>Всё остаётся у тебя.</strong> Избранное и история хранятся в браузере. Для переноса на другой компьютер используй экспорт и импорт базы.</div>
+          <div class="sidebar-tip"><div class="sidebar-tip-label">НА ЗАМЕТКУ МАСТЕРУ</div><p>Случайному NPC необязательна трагическая предыстория. Иногда достаточно того, что он спешит домой и ненавидит грубость.</p></div>
+        </aside>
+      </div>
+    </main>
+    <footer class="footer"><span>Кузница NPC · Фанатский инструмент для настольных ролевых игр</span><span>Работает прямо в браузере · без зависимостей · открытый исходный код</span></footer>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+/* NPC Forge — редактируемые словари генератора. Всё работает без библиотек и API. */
+window.NPC_DATA = {
+  species: {
+    human: {label:'Человек', names:{m:['Альрик','Бренн','Гектор','Дарион','Эдгар','Ивар','Каспер','Лукас','Мартин','Освальд','Роланд','Седрик','Теодор','Феликс','Хьюго','Эмиль','Ян','Винсент'],f:['Адела','Беатрис','Вера','Грета','Джулия','Ильза','Клара','Лидия','Марен','Нора','Розалин','Селина','Тесса','Ульрика','Фрида','Элла','Ирма','Агнес']},surnames:['Блэквуд','Крейн','Морроу','Вальд','Рот','Вест','Вейл','Торн','Грейвс','Брандт','Риверс','Хольт','Фальк','Беккет','Шталь','Рид','Эшфорд','Келлер'],details:['Обветренное лицо, будто жизнь проходит под открытым небом.','Усталые глаза, которые замечают больше, чем кажется.','Кожа покрыта старыми мелкими шрамами.','Опрятный вид резко контрастирует с грязью вокруг.']},
+    dwarf: {label:'Дворф', names:{m:['Борин','Бруни','Грим','Дарек','Дорин','Казад','Морек','Орсик','Торвин','Ульф','Фаргрим','Харбек'],f:['Брина','Висса','Грета','Дагна','Катра','Морна','Орла','Руна','Тора','Фарна','Хельга','Эмбра']},surnames:['Железнобород','Камнелом','Громовой Молот','Угольное Сердце','Медноклык','Твердоступ','Глубинный Щит','Серая Скала','Пепельный Клин'],details:['Борода или волосы собраны медными кольцами.','Толстые пальцы со следами тяжёлого труда.','Сапоги подбиты металлом и громко стучат по камню.','Носит старый клановый знак, тщательно прикрытый одеждой.']},
+    elf: {label:'Эльф', names:{m:['Аэрин','Ваэлис','Иллиан','Каэлен','Лаэрион','Нимриэль','Риан','Саэрис','Талион','Фаэрин','Элиан','Эрион'],f:['Аэлис','Велари','Илири','Лаэна','Мирэль','Наэви','Риэль','Сильва','Тиана','Фаэлин','Элара','Энари']},surnames:['Лунный Лист','Тихая Ветвь','Звёздный Путь','Серебряный Ручей','Вечерняя Роса','Сумеречный Бор','Лесная Тень','Ясный Ветер'],details:['Держится настолько прямо, что кажется неподвижным.','Волосы аккуратно перехвачены тонкой нитью.','Взгляд задерживается на лицах чуть дольше обычного.','Носит чужую человеческую вещицу как талисман.']},
+    halfling: {label:'Полурослик', names:{m:['Боббин','Брам','Вилли','Гаррет','Джаспер','Мило','Одо','Перрин','Рори','Тобин','Финн','Хэмми'],f:['Белла','Дотти','Иви','Лотта','Мэй','Мира','Нелли','Пенни','Рози','Салли','Тилли','Эбби']},surnames:['Доброхлеб','Малый Холм','Зелёная Ложка','Тёплый Очаг','Быстроног','Клевер','Яблочный Пирог','Тихолист'],details:['Машинально проверяет содержимое карманов.','Даже в опасной обстановке следит за чистотой ботинок.','Носит с собой маленький складной ножик.','Жестикулирует неожиданно широко для своего роста.']},
+    tiefling: {label:'Тифлинг', names:{m:['Азар','Варис','Дамир','Зевран','Кайр','Малик','Назир','Раэль','Сайрус','Тарек','Ферон','Эш'],f:['Азра','Веспера','Далия','Ирис','Кира','Лилит','Мерис','Никса','Равена','Сари','Талия','Эшра']},surnames:['Сажа','Ночная Искра','Пепел','Горькая Правда','Терновник','Искупление','Ворон','Бездна'],details:['На рогах видны мелкие сколы и царапины.','Хвост выдаёт эмоции раньше голоса.','Кончик хвоста осторожно оборачивается вокруг ножки стула.','Прячет руки в рукавах, несмотря на жару.']},
+    gnome: {label:'Гном', names:{m:['Боддин','Вимбл','Глим','Динкин','Занни','Коббл','Лорик','Ним','Пибл','Рикси','Тоббл','Фенвик'],f:['Бимма','Винни','Дебби','Занна','Кори','Лилли','Милли','Нисса','Пиппа','Ренна','Тилли','Фибби']},surnames:['Медная Пружина','Шестерёнкин','Свисток','Трескоключ','Искрящийся Винт','Пестролист','Многознай','Мелкозуб'],details:['Очки сползают на кончик носа.','Карман полон мелких инструментов.','Всё время что-нибудь крутит в пальцах.','Волосы пахнут маслом и дымом.']},
+    orc: {label:'Полуорк', names:{m:['Браг','Гарок','Горн','Дрог','Карг','Морг','Ругар','Тарг','Урз','Харг','Шарок','Ярг'],f:['Брака','Гора','Друна','Кара','Магра','Руга','Тарна','Урша','Харра','Шагра','Ярка','Зуга']},surnames:['Каменный Кулак','Красный Шрам','Кривой Клык','Ночной Дозор','Стальная Спина','Волчья Тропа','Громокост','Чёрный Гребень'],details:['На носу заметен след старого перелома.','Носит хорошо починенную одежду, явно дорогую сердцу.','Один клык обломан.','Руки исцарапаны и перевязаны полосками ткани.']},
+    dragonborn: {label:'Драконорождённый', names:{m:['Арджир','Бхараш','Драгар','Кхарин','Кривак','Надар','Патрин','Рхаз','Торинн','Фарак'],f:['Акра','Бири','Джери','Кава','Медраш','Нала','Райан','Сора','Траза','Фара']},surnames:['Пепельный Гребень','Медная Чешуя','Утренний Гром','Стальной Коготь','Огненная Кровь','Тихий Глас','Сломанный Рог'],details:['Чешуя на одном плече отличается оттенком.','Когти аккуратно подпилены.','При волнении из ноздрей вырывается едва заметный дымок.','На чешуе старые потёртости от брони.']}
+  },
+  roles: {
+    merchant:{label:'Торговец', activity:['пересчитывает монеты, не глядя на покупателей','прячет под прилавок подозрительную коробку','перевешивает товар уже третий раз'], wants:['вернуть долг, пока кредитор не пришёл','продать залежавшийся товар до заката','вычислить того, кто ворует из лавки','получить пропуск на безопасный торговый путь'],offers:['редкий расходник по завышенной цене','слухи о тех, кто покупает запрещённые товары','контакт другого торговца','неофициальную скидку в обмен на услугу'],lines:['Не трогайте руками. Сначала спросите цену.','Покупать будете или просто воздух портить?','Если ищете редкости — говорите тише.']},
+    innkeeper:{label:'Трактирщик',activity:['протирает чистый стакан','приглядывает за подозрительным столиком','пытается рассадить ссорящихся постояльцев'],wants:['сохранить репутацию заведения','убрать нежелательного гостя без драки','заплатить поставщику до утра','выяснить, кто пугает постояльцев'],offers:['комнату, о которой никто не спрашивает','имя последнего постояльца с необычной внешностью','немного еды в дорогу','встречу с завсегдатаем, знающим местные слухи'],lines:['За выпивку платят сразу, за драку — вдвойне.','Комната нужна или вы просто от дождя прячетесь?','Эй, потише. Здесь стены тонкие.']},
+    mercenary:{label:'Наёмник',activity:['точит клинок без особой необходимости','проверяет ремни на доспехе','разглядывает выходы из помещения'],wants:['получить аванс за опасную работу','найти пропавшего напарника','избавиться от позорного поручения','заработать на новый комплект снаряжения'],offers:['силовую помощь на один вечер','оценку маршрута и его опасностей','имя работодателя, который ищет бойцов','охрану во время короткой вылазки'],lines:['Если это предложение о работе, начните с денег.','У вас вид людей, за которыми тянутся неприятности.','Сядьте так, чтобы видеть дверь. Бесплатный совет.']},
+    guard:{label:'Стражник',activity:['скучающе стоит у ворот','перепроверяет документы прохожих','отгоняет зевак от оцепления'],wants:['дотянуть до конца смены без происшествий','добиться перевода на спокойный пост','найти человека, который подкупает караул','не подставить своего напарника'],offers:['неофициальную информацию о патрулях','разрешение пройти при убедительном объяснении','имя дежурного офицера','предупреждение о недавних арестах'],lines:['Цель визита? И без сказок, пожалуйста.','Уберите оружие. Это не обсуждается.','Я вас тут раньше не видел.']},
+    artisan:{label:'Ремесленник',activity:['в ярости изучает неудачную деталь','бережно заворачивает свежую работу','просит не загораживать свет'],wants:['достать качественный материал','доказать, что его работа лучше чужой','починить важную вещь до прихода заказчика','спасти мастерскую от закрытия'],offers:['быстрый ремонт несложной вещи','оценку странной находки','доступ к инструментам','сведения о заказчике необычного изделия'],lines:['Руками не хватать. Я ещё не закончил.','Видите шов? Вот в этом и есть разница между мастером и халтурщиком.','Если спешите, платите за спешку.']},
+    thief:{label:'Карманник',activity:['сливается с толпой у прилавков','невинно рассматривает чужой кошелёк','проверяет, не следят ли за ним'],wants:['избежать встречи со старым сообщником','сбыть краденое до облавы','расплатиться с бандой','разузнать, чей кошелёк стоит риска'],offers:['способ пройти через запертую калитку','имя скупщика','сведения о тайном входе','вещицу неизвестного происхождения'],lines:['Я? Нет, обознались.','Дорогу подсказать? Дорого не возьму.','Вы так громко ходите, что вас услышат за три квартала.']},
+    cultist:{label:'Фанатик',activity:['берегёт завёрнутый в ткань символ','тихо повторяет знакомую только ему фразу','наблюдает за знаками и совпадениями'],wants:['проверить, можно ли доверять незнакомцам','выполнить поручение наставника','найти место для тайного собрания','скрыть принадлежность к своему кругу'],offers:['необычное толкование недавнего события','сведения о закрытом собрании','опасный ритуальный предмет','помощь группы единомышленников'],lines:['Некоторые совпадения не бывают случайными.','Вам тоже снился один и тот же сон?','Лучше не произносите это имя вслух.']},
+    healer:{label:'Лекарь',activity:['перебирает чистые бинты','протирает инструменты спиртом','пытается не заснуть над записями'],wants:['добыть лекарства для тяжёлого больного','найти источник странной болезни','сохранить медицинскую тайну','не допустить паники из-за заражения'],offers:['первую помощь','совет об опасном симптоме','сведения о необычной ране','простое лекарство в обмен на услугу'],lines:['Раненые есть? Тогда остальных прошу не мешать.','Покажите руки. Нет, обе.','Это не смертельно. Пока что.']},
+    scholar:{label:'Учёный',activity:['спорит сам с собой над заметками','сравнивает две старые карты','бережно держит гербарий или образец'],wants:['найти подтверждение спорной гипотезы','вернуть украденные записи','добиться доступа к закрытой коллекции','исследовать опасную находку раньше конкурента'],offers:['расшифровку символа','историческую справку','совет по странному артефакту','наводку на заброшенное хранилище'],lines:['Стойте! Повторите то, что только что сказали.','Не трогайте образец, прошу вас.','Любопытно. Крайне любопытно.']},
+    beggar:{label:'Бродяга',activity:['укрывается от ветра за телегой','рассматривает прохожих снизу вверх','разговаривает с бездомной собакой'],wants:['поесть сегодня вечером','не попасть под облаву','разыскать потерянного родственника','сохранить найденную ценность'],offers:['наблюдение о ночных посетителях','слух, который никто не воспринимает всерьёз','безопасное место для ночлега','дорогу в обход оживлённой улицы'],lines:['Медяк найдётся? За хорошую историю — скидка.','А вы чего такие нарядные?','Я ничего не видел. Ну, почти.']},
+    courier:{label:'Посыльный',activity:['прижимает к груди сумку с письмами','пытается разобрать смазанный адрес','оглядывается на каждый оклик'],wants:['доставить срочное письмо вовремя','найти исчезнувшего адресата','не вскрыть послание, которое очень хочется прочитать','избежать встречи с преследователем'],offers:['новости с соседней улицы','адрес человека, которого ищут','передачу сообщения без лишних вопросов','сведения о закрытом проходе'],lines:['С дороги! Мне действительно некогда.','Если вы не адресат, разговор окончен.','Скажите, тут недавно не проходил человек в синем плаще?']},
+    noble:{label:'Аристократ',activity:['отводит подол одежды от грязи','недовольно рассматривает своё окружение','спорит со слугой шёпотом'],wants:['восстановить влияние семьи','скрыть скандал от посторонних','найти надёжных исполнителей','получить редкую вещь без огласки'],offers:['деньги за деликатную услугу','приглашение на закрытую встречу','знакомство с влиятельным человеком','рекомендательное письмо'],lines:['Мне обещали, что здесь будет безопасно.','Вы знаете, с кем разговариваете?','Возможно, мы сумеем быть взаимно полезны.']},
+    priest:{label:'Священнослужитель',activity:['расставляет свечи перед скромным алтарём','оказывает помощь измученному человеку','перебирает чётки'],wants:['помочь людям, которых все бросили','вернуть осквернённую святыню','остановить раскол среди верующих','спасти человека, которого считают безнадёжным'],offers:['убежище на одну ночь','благословение и добрый совет','рассказ о старом обете','сведения о местном культе'],lines:['Вас привела беда или надежда?','Не каждый, кто просит прощения, готов измениться.','Сначала напоим вас водой. Остальное потом.']},
+    guide:{label:'Проводник',activity:['наносит пометки на потёртую карту','проверяет подошвы сапог','следит за направлением ветра'],wants:['собрать группу для опасного маршрута','разыскать пропавших путешественников','убедить людей не идти гибельной тропой','добыть сведения о новой безопасной дороге'],offers:['путь в обход заставы','сведения о местных опасностях','необычную отметку на карте','сопровождение до ближайшего укрытия'],lines:['С этой стороны дороги сегодня лучше не ходить.','Карта у вас есть? Хорошо. А свежая?','Вернуться живым — тоже результат.']},
+    smuggler:{label:'Контрабандист',activity:['считает ящики, которых якобы не существует','условным знаком приветствует знакомого','старается держаться у запасного выхода'],wants:['провести груз незамеченным','найти замену арестованному курьеру','не платить дань двум бандам сразу','выяснить, кто слил маршрут страже'],offers:['дефицитный товар','неофициальный проход','договорённость с перевозчиком','имя человека, который умеет исчезать'],lines:['Лучше обсудим это там, где меньше ушей.','Я понятия не имею, что в ящиках. И вам не советую.','Это не контрабанда. Это свободная торговля.']},
+    scout:{label:'Разведчик',activity:['наблюдает за крышами и окнами','заклеивает порванную карту','делает вид, что отдыхает'],wants:['проверить слух об угрозе','убедить командование в своей правоте','не раскрыть источник сведений','избежать лишнего кровопролития'],offers:['наблюдения о чужих перемещениях','путь к скрытому укрытию','сведения о численности противника','оценку подозрительной местности'],lines:['Тише. Вы слышали?','Слишком открытое место для разговора.','Никто не смотрит наверх. Зря.']},
+    scavenger:{label:'Искатель добычи',activity:['вытряхивает пыль из найденного мешка','записывает стоимость каждой находки','заштопывает разорванный рукав'],wants:['вернуть потерянную в руинах вещь','нанять охрану для следующей вылазки','продать добычу до того, как ею заинтересуются власти','разыскать выжившего товарища'],offers:['вещь из недавно разграбленного здания','набросок местности','подсказку о безопасном тайнике','слух о ценном схроне'],lines:['Вы тоже за добычей? Тогда нам есть о чём поговорить.','Не всё, что блестит, стоит брать в руки.','Цена зависит от того, насколько сильно вы хотите это знать.']},
+    sailor:{label:'Моряк',activity:['чинит просоленный канат','внимательно изучает облака','считает дни до отплытия'],wants:['найти новую команду','вернуть украденный груз','разобраться с капитаном','выяснить причину пропажи судна'],offers:['путь по воде','морскую байку с крупицей правды','контакт в портовой среде','помощь с перевозкой'],lines:['На суше все смелые. А в шторм?','Город пахнет хуже трюма.','Говорите быстрее — прилив ждать не будет.']}
+  },
+  scenes:{
+    any:{label:'Любое место',roles:Object.keys({merchant:1,innkeeper:1,mercenary:1,guard:1,artisan:1,thief:1,cultist:1,healer:1,scholar:1,beggar:1,courier:1,noble:1,priest:1,guide:1,smuggler:1,scout:1,scavenger:1,sailor:1}),detail:['в городском переулке','среди прохожих','у дороги']},
+    tavern:{label:'Таверна',roles:['innkeeper','merchant','mercenary','thief','beggar','courier','noble','priest','smuggler','scavenger','sailor'],detail:['за дальним столиком','возле стойки','у печи']},
+    market:{label:'Рынок',roles:['merchant','guard','artisan','thief','beggar','courier','healer','scavenger','smuggler'],detail:['у рыночных рядов','под рваным навесом','в толпе покупателей']},
+    ruins:{label:'Руины',roles:['mercenary','scout','scavenger','guide','scholar','cultist','healer','smuggler'],detail:['у обвалившейся стены','среди пустых домов','возле заброшенного колодца']},
+    camp:{label:'Лагерь',roles:['mercenary','guard','healer','priest','guide','scout','scavenger','courier','merchant'],detail:['рядом с костром','у палаток','у груды снаряжения']},
+    road:{label:'Дорога',roles:['courier','guide','mercenary','merchant','priest','beggar','scout','smuggler','scavenger'],detail:['на разбитой дороге','возле придорожного указателя','у заброшенной телеги']},
+    city:{label:'Городская улица',roles:['guard','artisan','merchant','thief','beggar','courier','noble','healer','scholar','priest','smuggler'],detail:['в узком переулке','на людной площади','у закрытой лавки']},
+    harbor:{label:'Порт',roles:['sailor','smuggler','mercenary','merchant','thief','guard','beggar','courier','scout'],detail:['у причала','среди грузовых ящиков','рядом с портовым складом']}
+  },
+  ages:['Молодой взрослый','В расцвете лет','Зрелого возраста','Пожилой'],
+  silhouettes:['Носит плащ, испачканный засохшей грязью.','На ремне болтается ненужная на вид связка ключей.','Одевается неожиданно дорого для своего положения.','Рукава аккуратно заштопаны грубой ниткой.','Под одеждой заметен старый шрам на шее.','Пальцы постоянно перепачканы чернилами.','У пояса маленький мешочек с непонятным содержимым.','Прячется от яркого света под широкими полями шляпы.','Носит чужой медальон, который постоянно трогает.','Один сапог явно новее другого.','Пахнет дымом и пряными травами.','Волосы убраны так, будто человек собирался второпях.','На шее висит дешёвый оберег.','На перчатке отсутствует один палец.','Носит подвеску с выцветшим портретом.','Тщательно чистит обувь даже в грязи.'],
+  gestures:['Смотрит не на лицо, а на руки собеседника.','Привычно потирает переносицу.','Перед ответом оглядывается по сторонам.','Неосознанно считает что-то на пальцах.','Всё время перекладывает вещицу из руки в руку.','Подходит слишком близко во время разговора.','Держится на расстоянии вытянутой руки.','Постоянно поправляет воротник.','Избегает смотреть прямо в глаза.','Во время пауз замирает, почти не дыша.','Улыбается невпопад.','Касается собственного плеча, будто проверяет старую рану.','Повторяет чужие жесты с лёгким опозданием.','При разговоре стоит вполоборота к выходу.','Стучит ногтем по дереву в одном ритме.','Наклоняет голову при каждом вопросе.'],
+  temperaments:['Нервный и суетливый','Сдержанный и рассудительный','Шумный и азартный','Уставший, но учтивый','Упрямый и колючий','Искренне добродушный','Саркастичный наблюдатель','Сухой и деловой','Мечтательный чудак','Самоуверенный хвастун','Осторожный прагматик','Неожиданно заботливый'],
+  attitudes:[
+    {id:'wary',title:'Сначала не доверяет',first:'Внимательно присматривается и не отвечает на лишние вопросы.'},
+    {id:'friendly',title:'Рад компании',first:'Быстро предлагает помощь или заводит разговор.'},
+    {id:'afraid',title:'Побаивается героев',first:'Старается не злить вооружённых незнакомцев.'},
+    {id:'greedy',title:'Видит в них выгоду',first:'Пытается превратить разговор в сделку.'},
+    {id:'proud',title:'Считает себя выше их',first:'Ждёт уважительного обращения и не терпит приказов.'},
+    {id:'indifferent',title:'Ему совершенно некогда',first:'Отвечает только на вопросы по делу.'},
+    {id:'curious',title:'Жаждет подробностей',first:'Задаёт больше вопросов, чем получает.'},
+    {id:'hostile',title:'Настроен недружелюбно',first:'Ищет повод закончить беседу.'},
+    {id:'helpful',title:'Хочет помочь',first:'Считает правильным поддержать попавших в беду.'},
+    {id:'suspicious',title:'Принимает их за чужих людей',first:'Пытается выяснить, кто послал этих незнакомцев.'}
+  ],
+  immediate:['Куда-то очень спешит.','Только что поссорился с близким человеком.','Пытается скрыть плохое настроение.','Сегодня не выспался.','Переживает из-за пропавших денег.','Боится, что за ним наблюдают.','Пытается произвести на кого-то впечатление.','Чего-то напряжённо ждёт.','Услышал неприятную новость.','Слишком долго не ел.','Не хочет, чтобы его узнали.','Ещё не оправился от недавней драки.','Собирается покинуть это место до темноты.','Пытается загладить свою ошибку.'],
+  fears:['потерять единственного близкого человека','оказаться должником опасных людей','стать причиной чужой смерти','потерять лицо перед товарищами','остаться без крыши над головой','привлечь внимание властей','снова попасть в ловушку','что вскроется старая ложь','оказаться бесполезным','вернуться туда, откуда однажды сбежал','увидеть последствия собственной ошибки','что его предадут те, кому он доверяет'],
+  principles:['Не предаст того, кому дал слово.','Не станет вредить детям.','Не рискнёт жизнью без понятной причины.','Не выдаст родных даже под угрозой.','Никогда не работает бесплатно.','Откажется участвовать в бессмысленной жестокости.','Не позволит себя публично унизить.','Не отдаст последнюю личную вещь.','Не врёт на прямой вопрос, но умеет умалчивать.','Не станет сотрудничать с местной стражей.','Не пойдёт в руины даже за большие деньги.','Не оставит раненого товарища.','Не нарушает обещания, данные мёртвым.','Не торгуется с теми, кто угрожает невинным.'],
+  secretsMundane:['тайком помогает сопернику своего работодателя','сильно преувеличивает собственный опыт','когда-то присвоил чужую находку','подделал подпись в важном документе','хранит письмо, которое так и не отправил','знает, кто украл общие деньги, но молчит','распространяет слухи за вознаграждение','встречается с человеком из враждующего круга','скрывает, что не умеет читать','выдаёт чужую работу за свою','незаметно снабжает едой бедняков','прячет вещь, принадлежавшую пропавшему'],
+  secretsDanger:['продаёт сведения о маршрутах незнакомцам','получил приказ следить за одним из посетителей','видел существо, которого все считают выдумкой','носит заражённый или проклятый предмет','знает тайный ход в охраняемое место','стал свидетелем убийства, но боится говорить','помог бежать разыскиваемому человеку','поддерживает связь с местной преступной группой','заключил крайне невыгодную тайную сделку','собирается предать своего нанимателя','состоит в закрытом обществе','прячет опасную находку среди обычных вещей'],
+  secretsStrange:['слышит по ночам зов из заброшенного здания','утверждает, что помнит событие, которого не было','имеет точную копию вещи, которую герои уже видели','получает письма от человека, который давно умер','уверен, что его отражение иногда движется иначе','каждую ночь видит один и тот же пустой переулок','нашёл карту с улицей, которой нет','проснулся однажды с чужими воспоминаниями','заметил, что один знакомый не стареет','носит монету, которая возвращается после каждой потери'],
+  leadsGrim:['На соседней улице исчезают люди, и никто не хочет говорить об этом.','Кто-то платит за сведения о маршрутах патрулей.','В заброшенном здании по ночам загорается свет.','Недавняя вылазка вернулась с одним лишним человеком.','На рынке продают находку, которую считали уничтоженной.','Один из местных влиятельных людей внезапно уехал.','Старую дорогу закрыли после непонятного происшествия.','Несколько незнакомцев расспрашивают об одной и той же вещи.','В округе появились поддельные разрешения на проход.','Кто-то платит за возвращение пустого, на первый взгляд, сундука.'],
+  leadsClassic:['Из старой башни начали доноситься странные звуки.','Купец ищет смельчаков для охраны каравана.','Путешественник исчез по пути к древнему мосту.','На стене храма появился неизвестный символ.','В ближайшем лесу видели огни без костра.','Семейную реликвию украли накануне праздника.','На дороге появился человек, продающий невероятную карту.','В деревне ищут пропавшую лошадь с важным грузом.'],
+  leadsStrange:['Все жители одного дома утверждают, что никогда там не жили.','В трактире каждый день появляется один и тот же забытый ключ.','На старых картах обнаружилась улица, которой нет на новых.','Колокол звонит каждую ночь, хотя башня давно рухнула.','Незнакомец предлагает купить воспоминание.','Некто заказывает одинаковые портреты разных людей.','Все часы в квартале начали отставать на один час.','В пустом доме находят свежие отпечатки мокрых ног.'],
+  pitch:['Низкий, немного хриплый','Высокий, звонкий','Мягкий, почти убаюкивающий','Глухой, словно сквозь шарф','Ровный и бесцветный','Сухой, с металлическими нотками','Басовитый и тёплый','Тихий, но очень чёткий','Скрипучий, как старая дверь','Обычный, ничем не примечательный'],
+  tempo:['Говорит быстро, почти не переводя дыхание','Медленно подбирает слова','Произносит короткие рубленые фразы','Тянет паузы перед важным словом','Говорит ровно, будто читает инструкцию','Ускоряется, когда волнуется','Начинает тихо, затем внезапно повышает голос','Сначала внимательно выслушивает, потом отвечает'],
+  speechNormal:[
+    {id:'plain',title:'Без заметной особенности',hint:'Не меняй произношение — играй паузами и темпом.'},
+    {id:'formal',title:'Чрезмерно вежливый',hint:'Даже грубость оформляет как официальную просьбу.'},
+    {id:'questions',title:'Отвечает вопросом на вопрос',hint:'Прежде чем ответить, задаёт встречный вопрос.'},
+    {id:'repeats',title:'Повторяет последнее слово',hint:'Подхватывает конец фразы собеседника.'},
+    {id:'whispers',title:'Почти шепчет',hint:'Приближается, чтобы его расслышали.'},
+    {id:'commands',title:'Говорит повелительными фразами',hint:'Даже просьбы звучат как приказ.'},
+    {id:'filler',title:'Вставляет «значит»',hint:'Начинает предложения с «значит».'},
+    {id:'metaphor',title:'Думает образами',hint:'Сравнивает людей, вещи и события с простыми предметами.'},
+    {id:'short',title:'Односложные ответы',hint:'Лишних объяснений от него не добиться.'},
+    {id:'proverb',title:'Любит поговорки',hint:'К месту и не к месту вставляет народные мудрости.'}
+  ],
+  speechStrange:[
+    {id:'snake',title:'Тянет «с», будто змея',hint:'Слегка удлиняй свистящие звуки: «ссс».'},
+    {id:'lisp',title:'Шепелявит',hint:'Мягко искажает шипящие, не делай речь неразборчивой.'},
+    {id:'r',title:'Картавит',hint:'Смягчай «р» — достаточно пары заметных слов.'},
+    {id:'vowels',title:'Растягивает гласные',hint:'Особенно в ключевых словах.'},
+    {id:'broken',title:'Обрывает фразы на полуслове',hint:'Часто заканчивает мысль без заключения.'},
+    {id:'third',title:'Говорит о себе в третьем лице',hint:'Называет себя по имени вместо «я».'},
+    {id:'count',title:'Пересчитывает слова',hint:'Иногда отбивает слоги пальцем.'},
+    {id:'rhyme',title:'Пытается рифмовать',hint:'Вставляет простые смешные рифмы.'},
+    {id:'echo',title:'Тихо повторяет собственные слова',hint:'Каждая важная фраза словно имеет эхо.'},
+    {id:'sing',title:'Почти напевает речь',hint:'Конец предложения уходит вверх по тону.'},
+    {id:'laugh',title:'Смеётся после серьёзных слов',hint:'Неловкий смешок на самых неуместных местах.'},
+    {id:'hiss',title:'Выговаривает согласные с шипением',hint:'Создаёт ощущение сдерживаемого раздражения.'}
+  ]
+};
+
+</script>
+<script>
+(() => {
+  'use strict';
+  const D = window.NPC_DATA;
+  const STORE = 'npc-forge-v1';
+  const PARTS = ['identity', 'look', 'voice', 'social', 'intrigue'];
+  const ACTIONS = [
+    {id:'threat',label:'Угрожают'},
+    {id:'bribe',label:'Предлагают деньги'},
+    {id:'flatter',label:'Льстят'},
+    {id:'help',label:'Просят помочь'},
+    {id:'lie',label:'Ловят на лжи'}
+  ];
+  const REACTIONS = {
+    threat:{
+      wary:'Замолкает и изучает, насколько угроза реальна. Отвечает только на самое необходимое.',
+      friendly:'Пугается и чувствует себя преданным. Поможет разве что из страха, а после избегает героев.',
+      afraid:'Почти сразу уступает в мелочах, но может соврать, лишь бы его отпустили.',
+      greedy:'Пытается договориться: безопасность для него тоже имеет цену.',
+      proud:'Публично идёт на конфликт, даже если это крайне неразумно.',
+      indifferent:'Пробует оборвать разговор и отойти. При серьёзной угрозе ищет свидетелей.',
+      curious:'Первой реакцией задаёт вопрос: кто их послал и чего они добиваются?',
+      hostile:'Воспринимает угрозу как подтверждение своих подозрений. Ищет поддержку или путь к отступлению.',
+      helpful:'Больше беспокоится о тех, кто окажется рядом, чем о себе.',
+      suspicious:'Решает, что его вычислили. Скрывает детали, которые могли бы выдать сообщников.'
+    },
+    bribe:{
+      wary:'Не берёт монеты сразу: сначала выясняет, что от него потребуется и кто узнает.',
+      friendly:'Ему неловко брать деньги за простую помощь. За опасную услугу всё-таки попросит плату.',
+      afraid:'Сомневается, что сможет отказаться. Проверяет, не ловушка ли это.',
+      greedy:'Оживляется, повышает ставку и предлагает «дополнительные услуги».',
+      proud:'Считает прямую взятку оскорблением. Может согласиться, если назвать её вознаграждением.',
+      indifferent:'Становится внимательнее лишь при сумме, которая решает его проблему.',
+      curious:'Интересуется, зачем героям именно его помощь, прежде чем назвать цену.',
+      hostile:'Может взять задаток, ничего не обещая. Доверять ему пока нельзя.',
+      helpful:'Предлагает помочь без оплаты, если дело не противоречит его принципам.',
+      suspicious:'Подозревает подставу. Просит передать плату через посредника.'
+    },
+    flatter:{
+      wary:'Слушает с недоверием, но начинает чуть охотнее делиться опытом.',
+      friendly:'Расцветает и пытается быть ещё полезнее, иногда обещая слишком многое.',
+      afraid:'Успокаивается, хотя не сразу понимает, чего от него хотят.',
+      greedy:'Принимает комплимент как знак, что цену можно поднять.',
+      proud:'С удовольствием разворачивает монолог о собственных заслугах.',
+      indifferent:'Кивает без интереса. Лучше работает конкретная просьба.',
+      curious:'Спрашивает, откуда герои о нём слышали, и начинает выспрашивать о них.',
+      hostile:'Подозревает насмешку. Искренняя похвала делу, а не личности может сработать.',
+      helpful:'Благодарит, но переводит разговор на практическую помощь.',
+      suspicious:'Улыбается, не выдавая чувств, и пытается выяснить источник комплимента.'
+    },
+    help:{
+      wary:'Просит объяснить, почему обратились именно к нему. Маленькую услугу может оказать.',
+      friendly:'Соглашается на посильную помощь и просит потом рассказать, чем всё закончилось.',
+      afraid:'Оглядывается и говорит, что не хочет ввязываться. Нуждается в гарантиях безопасности.',
+      greedy:'Сперва спрашивает об оплате, потом — о самой просьбе.',
+      proud:'Ожидает уважительного тона. Услугу считает одолжением, которое потом припомнит.',
+      indifferent:'Спросит конкретно: «Что нужно, сколько это займёт и зачем?»',
+      curious:'Готов подключиться, если история покажется достаточно необычной.',
+      hostile:'Отказывает автоматически. Изменит решение только ради общей выгоды или сильного аргумента.',
+      helpful:'Ищет, как помочь прямо сейчас, даже если это затруднит его собственные дела.',
+      suspicious:'Сперва хочет убедиться, что просьба не сделает его крайним.'
+    },
+    lie:{
+      wary:'Застывает, а потом требует доказательств, прежде чем признать ложь.',
+      friendly:'Краснеет от стыда и пытается объяснить, почему не сказал всей правды.',
+      afraid:'Начинает путаться в объяснениях. Может выдать чужое имя, чтобы от него отстали.',
+      greedy:'Предлагает обменять правду на обещание молчать или вознаграждение.',
+      proud:'Отрицает до последнего и переводит всё в спор о формулировках.',
+      indifferent:'Вздыхает: «Ладно, поймали. Что дальше?»',
+      curious:'Поражается, как герои заметили нестыковку, и начинает расспрашивать их.',
+      hostile:'Злится и пытается закончить беседу. Вполне может предупредить союзников.',
+      helpful:'Признаёт обман и пытается исправить его последствия.',
+      suspicious:'Заявляет, что именно этого вопроса и ждал. Проверяет, что герои уже знают.'
+    }
+  };
+
+  const el = id => document.getElementById(id);
+  const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+  const oneOf = (items, weights) => {
+    let sum = weights.reduce((a,b)=>a+b,0), x=Math.random()*sum;
+    for (let i=0;i<items.length;i++) {x-=weights[i];if (x<0) return items[i];}
+    return items[items.length-1];
+  };
+  const randomId = () => `npc-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`;
+  const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const clone = x => JSON.parse(JSON.stringify(x));
+  const filterEls = ['sceneFilter','roleFilter','speciesFilter','genderFilter','toneFilter','weirdFilter'];
+  const defaults = {sceneFilter:'any',roleFilter:'any',speciesFilter:'any',genderFilter:'any',toneFilter:'grim',weirdFilter:'medium'};
+  let activeTab = 'saved';
+  let activeReaction = 'threat';
+  let toastTimer = null;
+  let persistenceOk = true;
+  const state = {
+    current:null,
+    saved:[],
+    history:[],
+    locks:Object.fromEntries(PARTS.map(k=>[k,false])),
+    filters:{...defaults}
+  };
+
+  function notify(message) {
+    const node=el('toast');
+    node.textContent=message;
+    node.classList.add('visible');
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(()=>node.classList.remove('visible'),2400);
+  }
+  function safeRead() {
+    try {
+      const raw=localStorage.getItem(STORE);
+      if (!raw) return;
+      const data=JSON.parse(raw);
+      if (data && typeof data==='object') {
+        state.saved=Array.isArray(data.saved)?data.saved.filter(isValidNpc).slice(0,500):[];
+        state.history=Array.isArray(data.history)?data.history.filter(isValidNpc).slice(0,20):[];
+        state.current=isValidNpc(data.current)?data.current:null;
+        state.locks={...state.locks,...Object.fromEntries(PARTS.map(k=>[k,Boolean(data.locks?.[k])]))};
+        state.filters={...defaults,...(data.filters||{})};
+      }
+    } catch(err) {console.warn('Не удалось прочитать хранилище:',err);persistenceOk=false;}
+  }
+  function persist() {
+    try {
+      localStorage.setItem(STORE,JSON.stringify({current:state.current,saved:state.saved,history:state.history,locks:state.locks,filters:state.filters}));
+      persistenceOk=true;
+    } catch(err) {
+      console.warn('Не удалось сохранить:',err);
+      if (persistenceOk) notify('Хранилище браузера недоступно — сделай экспорт базы');
+      persistenceOk=false;
+    }
+  }
+  function isValidNpc(n) {return !!(n && typeof n==='object' && typeof n.id==='string' && n.identity && typeof n.identity.name==='string' && typeof n.identity.firstName==='string' && D.roles[n.identity.roleKey] && D.species[n.identity.speciesKey] && D.scenes[n.identity.sceneKey] && ['m','f'].includes(n.identity.gender) && n.look && typeof n.look.feature==='string' && typeof n.look.dress==='string' && typeof n.look.gesture==='string' && n.voice && typeof n.voice.pitch==='string' && typeof n.voice.tempo==='string' && n.voice.quirk && typeof n.voice.quirk.title==='string' && typeof n.voice.quirk.id==='string' && Number.isInteger(n.voice.lineIndex) && n.social && typeof n.social.temperament==='string' && typeof n.social.immediate==='string' && typeof n.social.want==='string' && typeof n.social.fear==='string' && typeof n.social.principle==='string' && n.social.attitude && typeof n.social.attitude.id==='string' && typeof n.social.attitude.title==='string' && typeof n.social.attitude.first==='string' && n.intrigue && typeof n.intrigue.secret==='string' && typeof n.intrigue.offer==='string' && typeof n.intrigue.lead==='string');}
+  function fillSelect(id, choices, placeholder) {
+    const node=el(id);
+    node.innerHTML=`<option value="any">${esc(placeholder)}</option>` + Object.entries(choices).filter(([key])=>key!=='any').map(([key,data])=>`<option value="${esc(key)}">${esc(data.label)}</option>`).join('');
+  }
+  function setupFilters(){
+    fillSelect('sceneFilter',D.scenes,'Любое место');
+    fillSelect('roleFilter',D.roles,'Случайная');
+    fillSelect('speciesFilter',D.species,'Случайный');
+    for (const id of filterEls) {
+      const node=el(id);
+      if ([...node.options].some(o=>o.value===state.filters[id])) node.value=state.filters[id];
+      node.addEventListener('change',()=>{state.filters[id]=node.value;persist();});
+    }
+  }
+  function speciesSelection(){
+    const value=el('speciesFilter').value;
+    if(D.species[value])return value;
+    return oneOf(['human','dwarf','elf','halfling','tiefling','gnome','orc','dragonborn'],[54,9,9,7,7,6,5,3]);
+  }
+  function identity(context){
+    const sceneKey=context?.sceneKey || (el('sceneFilter').value!=='any'?el('sceneFilter').value:pick(Object.keys(D.scenes).filter(k=>k!=='any')));
+    const configuredRole=el('roleFilter').value;
+    const roleKey=context?.roleKey || (D.roles[configuredRole]?configuredRole:pick(D.scenes[sceneKey]?.roles||D.scenes.any.roles));
+    const speciesKey=speciesSelection();
+    const gender=el('genderFilter').value==='any'?pick(['m','f']):el('genderFilter').value;
+    const s=D.species[speciesKey];
+    const firstName=pick(s.names[gender]);
+    const surname=pick(s.surnames);
+    return {sceneKey,roleKey,speciesKey,gender,firstName,surname,name:`${firstName} ${surname}`,age:pick(D.ages),activity:pick(D.roles[roleKey].activity),sceneDetail:pick(D.scenes[sceneKey]?.detail||D.scenes.any.detail)};
+  }
+  function look(ident){
+    return {feature:pick(D.species[ident.speciesKey].details),dress:pick(D.silhouettes),gesture:pick(D.gestures)};
+  }
+  function voice(){
+    const level=el('weirdFilter').value;
+    const chance=level==='low'?.12:level==='high'?.76:.36;
+    const options=Math.random()<chance?D.speechStrange:D.speechNormal;
+    return {pitch:pick(D.pitch),tempo:pick(D.tempo),quirk:clone(pick(options)),lineIndex:Math.floor(Math.random()*12)};
+  }
+  function social(ident){
+    return {temperament:pick(D.temperaments),attitude:clone(pick(D.attitudes)),immediate:pick(D.immediate),want:pick(D.roles[ident.roleKey].wants),fear:pick(D.fears),principle:pick(D.principles)};
+  }
+  function intrigue(ident){
+    const tone=el('toneFilter').value;
+    const weird=el('weirdFilter').value;
+    const list= tone==='strange' && Math.random()<.65?D.secretsStrange:(Math.random()<(weird==='low'?.24:weird==='high'?.62:.42)?D.secretsDanger:D.secretsMundane);
+    const lead=tone==='strange'?D.leadsStrange:tone==='classic'?D.leadsClassic:D.leadsGrim;
+    return {secret:pick(list),offer:pick(D.roles[ident.roleKey].offers),lead:pick(lead)};
+  }
+  function addToHistory(npc){
+    if(!npc)return;
+    state.history=[clone(npc),...state.history.filter(item=>item.id!==npc.id)].slice(0,16);
+  }
+  function generate(){
+    if (state.current) addToHistory(state.current);
+    const ident=state.locks.identity && state.current?clone(state.current.identity):identity();
+    const part=(k,fn)=>state.locks[k]&&state.current?clone(state.current[k]):fn(ident);
+    state.current={id:randomId(),createdAt:Date.now(),notes:'',identity:ident,look:part('look',look),voice:part('voice',voice),social:part('social',social),intrigue:part('intrigue',intrigue)};
+    activeReaction='threat';
+    persist();renderAll();
+  }
+  function rerollPart(part){
+    const npc=state.current;
+    if (!npc || !PARTS.includes(part))return;
+    if (part==='identity') {
+      const old=npc.identity;
+      npc.identity=identity({sceneKey:old.sceneKey,roleKey:old.roleKey});
+      // При смене народа обновляем зависящую от него внешность, если она не закреплена.
+      if (old.speciesKey!==npc.identity.speciesKey && !state.locks.look) npc.look=look(npc.identity);
+    } else if(part==='look')npc.look=look(npc.identity);
+    else if(part==='voice')npc.voice=voice(npc.identity);
+    else if(part==='social')npc.social=social(npc.identity);
+    else if(part==='intrigue')npc.intrigue=intrigue(npc.identity);
+    // Любые точечные изменения сохраняют идентификатор героя и не затрагивают остальные части.
+    updateSavedIfPresent();persist();renderAll();
+  }
+  function updateSavedIfPresent(){
+    const idx=state.saved.findIndex(n=>n.id===state.current?.id);
+    if(idx!==-1)state.saved[idx]=clone(state.current);
+  }
+  function nameInitials(name){return name.split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase();}
+  function speechLine(npc){
+    const raw=D.roles[npc.identity.roleKey].lines[npc.voice.lineIndex%D.roles[npc.identity.roleKey].lines.length];
+    const q=npc.voice.quirk.id;
+    if(q==='snake')return raw.replace(/с/gi,match=>match+'с').replace(/з/gi,match=>match+'з');
+    if(q==='lisp')return raw.replace(/ш/gi,'с').replace(/ж/gi,'з');
+    if(q==='r')return raw.replace(/р/gi,'л');
+    if(q==='vowels') {let n=0;return raw.replace(/[аеёиоуыэюя]/gi,c=>n++<3?c+c:c);}
+    if(q==='broken')return raw.replace(/[.!?]$/,'…');
+    if(q==='third')return `${npc.identity.firstName} скажет так: ${raw}`;
+    if(q==='filler')return `Значит… ${raw}`;
+    if(q==='formal')return `Прошу прощения. ${raw}`;
+    if(q==='questions')return `А вы-то что думаете? ${raw}`;
+    if(q==='rhyme')return `${raw} Вот такие пироги.`;
+    if(q==='echo')return `${raw} …Да, именно так.`;
+    return raw;
+  }
+  function sectionHead(part,number,title){
+    const locked=state.locks[part];
+    const lockIcon=locked?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/></svg>';
+    return `<div class="section-head"><div class="section-heading"><span class="section-no">${number}</span><h3>${title}</h3></div><div class="section-actions"><button type="button" class="small-icon-btn ${locked?'locked':''}" data-action="lock" data-part="${part}" aria-pressed="${locked}" aria-label="${locked?'Открепить':'Закрепить'} раздел ${title}" title="${locked?'Открепить раздел':'Не менять при новом NPC'}">${lockIcon}</button><button type="button" class="small-icon-btn" data-action="reroll" data-part="${part}" aria-label="Перебросить раздел ${title}" title="Перебросить только этот раздел">⟳</button></div></div>`;
+  }
+  function field(label,value,extra=''){
+    return `<div class="${extra}"><div class="detail-label">${esc(label)}</div><div class="detail-value">${esc(value)}</div></div>`;
+  }
+  function renderCard(){
+    const npc=state.current;
+    if(!npc)return;
+    const {identity:i,look:l,voice:v,social:s,intrigue:q}=npc;
+    const role=D.roles[i.roleKey], species=D.species[i.speciesKey];
+    const mood=s.attitude.title;
+    const note=typeof npc.notes==='string'?npc.notes:'';
+    el('characterCard').innerHTML=`
+      <section class="npc-hero">
+        <div class="npc-hero-main">
+          <div class="avatar" aria-hidden="true">${esc(nameInitials(i.name))}</div>
+          <div class="name-wrap">
+            <div class="role-marker">${esc(role.label)} · ${esc(D.scenes[i.sceneKey]?.label||'Место неизвестно')}</div>
+            <h2 class="npc-name">${esc(i.name)}</h2>
+            <div class="npc-meta"><span>${esc(species.label)}</span><span>${esc(i.age)}</span><span>${i.gender==='m'?'Мужчина':'Женщина'}</span></div>
+          </div>
+        </div>
+        <div class="npc-summary">
+          <div class="summary-tile"><small>Манера</small><strong>${esc(s.temperament)}</strong></div>
+          <div class="summary-tile"><small>Отношение</small><strong>${esc(mood)}</strong></div>
+          <div class="summary-tile"><small>Прямо сейчас</small><strong>${esc(s.immediate)}</strong></div>
+        </div>
+      </section>
+      <section class="npc-section">
+        ${sectionHead('identity','01','Кто это')}
+        <div class="feature-grid">
+          ${field('Занятие',role.label)}
+          ${field('Где находится',i.sceneDetail)}
+          ${field('Чем занят в эту секунду',i.activity,'full')}
+        </div>
+      </section>
+      <section class="npc-section">
+        ${sectionHead('look','02','Первое впечатление')}
+        <div class="feature-grid">
+          ${field('Внешность',l.feature)}
+          ${field('Приметная деталь',l.dress)}
+          ${field('Язык тела',l.gesture,'full')}
+        </div>
+      </section>
+      <section class="npc-section">
+        ${sectionHead('voice','03','Как отыгрывать')}
+        <div class="feature-grid">
+          ${field('Голос',v.pitch)}
+          ${field('Ритм речи',v.tempo)}
+          ${field('Фишка речи',v.quirk.title)}
+          ${field('Как изобразить',v.quirk.hint)}
+        </div>
+        <blockquote class="voice-quote">«${esc(speechLine(npc))}»<span class="quote-caption">Первая реплика — пример звучания</span></blockquote>
+      </section>
+      <section class="npc-section">
+        ${sectionHead('social','04','Что у него в голове')}
+        <div class="feature-grid">
+          ${field('Отношение к героям',s.attitude.first,'full')}
+          ${field('Чего хочет',s.want)}
+          ${field('Чего боится',s.fear)}
+          ${field('Личная граница',s.principle,'full')}
+        </div>
+      </section>
+      <section class="npc-section">
+        ${sectionHead('intrigue','05','Крючки для истории')}
+        <div class="feature-grid">
+          ${field('Что скрывает (только мастеру)',q.secret,'full')}
+          ${field('Что может дать героям',q.offer)}
+          ${field('Слух или зацепка',q.lead)}
+        </div>
+      </section>
+      <section class="npc-section" id="reactionsSection">
+        <div class="section-head"><div class="section-heading"><span class="section-no">06</span><h3>А если герои…</h3></div></div>
+        <div class="reaction-menu" id="reactionMenu">${ACTIONS.map(a=>`<button type="button" class="reaction-chip ${activeReaction===a.id?'active':''}" data-reaction="${a.id}" aria-pressed="${activeReaction===a.id}">${esc(a.label)}</button>`).join('')}</div>
+        <div class="reaction-result" id="reactionResult">${reactionHtml(npc,activeReaction)}</div>
+        <p class="dm-note">Это не жёсткий сценарий, а подсказка. Учитывай обстоятельства и предыдущие действия игроков.</p>
+      </section>
+      <section class="npc-section">
+        <div class="section-head"><div class="section-heading"><span class="section-no">07</span><h3>Заметки мастера</h3></div></div>
+        <textarea class="notes-area" id="npcNotes" placeholder="Что герои ему сказали? Что он обещал? Где появится снова?" aria-label="Заметки мастера">${esc(note)}</textarea>
+        <p class="notes-caption">Заметки попадают в Markdown, архив и резервную копию JSON.</p>
+      </section>`;
+    const saved=state.saved.some(x=>x.id===npc.id);
+    const save=el('saveBtn');
+    save.innerHTML=saved?'★ Сохранён':'☆ Сохранить';
+    save.classList.toggle('is-saved',saved);
+    save.setAttribute('aria-pressed',String(saved));
+  }
+  function reactionHtml(npc,action){
+    const a=ACTIONS.find(x=>x.id===action)||ACTIONS[0];
+    const text=REACTIONS[a.id]?.[npc.social.attitude.id]||'Реагирует осторожно и пытается понять намерения героев.';
+    let extension='';
+    if(action==='help')extension=`<br><br><b>Лучший аргумент:</b> предложить помощь с его целью — ${esc(npc.social.want)}.`;
+    if(action==='threat')extension=`<br><br><b>Красная черта:</b> ${esc(npc.social.principle)}`;
+    if(action==='bribe')extension=`<br><br><b>Что действительно нужно:</b> ${esc(npc.social.want)}.`;
+    if(action==='lie')extension=`<br><br><b>О чём может умолчать:</b> ${esc(npc.intrigue.secret)}.`;
+    return `<b>${esc(a.label)}.</b> ${esc(text)}${extension}`;
+  }
+  function updateReactionUI(){
+    const result=el('reactionResult');
+    if(result) result.innerHTML=reactionHtml(state.current,activeReaction);
+    document.querySelectorAll('[data-reaction]').forEach(btn=>{
+      const yes=btn.dataset.reaction===activeReaction;
+      btn.classList.toggle('active',yes);
+      btn.setAttribute('aria-pressed',String(yes));
+    });
+  }
+  function renderLibrary(){
+    el('libraryCount').textContent=state.saved.length;
+    const list=activeTab==='saved'?state.saved:state.history;
+    const q=el('librarySearch').value.trim().toLocaleLowerCase('ru');
+    const result=list.filter(n=>`${n.identity.name} ${D.roles[n.identity.roleKey].label} ${D.species[n.identity.speciesKey].label} ${n.notes||''}`.toLocaleLowerCase('ru').includes(q));
+    el('libraryList').innerHTML=result.length?result.map(n=>{
+      const role=D.roles[n.identity.roleKey];
+      return `<div class="library-item"><div class="library-char" aria-hidden="true">${esc(nameInitials(n.identity.name))}</div><button type="button" class="library-link" data-load="${esc(n.id)}"><strong>${esc(n.identity.name)}</strong><small>${esc(role.label)} · ${esc(D.species[n.identity.speciesKey].label)}</small></button>${activeTab==='saved'?`<button class="library-delete" data-delete="${esc(n.id)}" type="button" aria-label="Удалить ${esc(n.identity.name)} из архива" title="Удалить из сохранённых">×</button>`:''}</div>`;
+    }).join(''):`<div class="empty-state"><div class="empty-symbol">✧</div><strong>${q?'Ничего не найдено':activeTab==='saved'?'Пока никого нет':'История пуста'}</strong><p>${q?'Попробуй другое имя или профессию.':activeTab==='saved'?'Нажми «Сохранить» на понравившемся NPC.':'Здесь появятся предыдущие персонажи после генерации новых.'}</p></div>`;
+    el('tabSaved').classList.toggle('active',activeTab==='saved');
+    el('tabHistory').classList.toggle('active',activeTab==='history');
+    el('tabSaved').setAttribute('aria-selected',String(activeTab==='saved'));
+    el('tabHistory').setAttribute('aria-selected',String(activeTab==='history'));
+    el('libraryList').setAttribute('aria-labelledby',activeTab==='saved'?'tabSaved':'tabHistory');
+  }
+  function renderAll(){renderCard();renderLibrary();}
+  function toggleSaved(){
+    if(!state.current)return;
+    const id=state.current.id;
+    if(state.saved.some(n=>n.id===id)) {state.saved=state.saved.filter(n=>n.id!==id);notify('Убрано из сохранённых');}
+    else {state.saved.unshift(clone(state.current));notify('NPC добавлен в архив');}
+    persist();renderAll();
+  }
+  function loadNpc(id){
+    const match=[...state.saved,...state.history].find(n=>n.id===id);
+    if(!match)return;
+    if(state.current?.id!==id)addToHistory(state.current);
+    state.current=clone(match);
+    activeReaction='threat';persist();renderAll();
+    el('characterCard').scrollIntoView({behavior:'smooth',block:'start'});
+    notify('Персонаж загружен');
+  }
+  function plainExport(n){
+    const i=n.identity,v=n.voice,s=n.social,q=n.intrigue;
+    return `${i.name} — ${D.roles[i.roleKey].label}\n${D.species[i.speciesKey].label}, ${i.age}. ${D.scenes[i.sceneKey]?.label||''}.\nМанера: ${s.temperament}. Отношение: ${s.attitude.title}.\nРечь: ${v.tempo}; ${v.quirk.title}.\nХочет: ${s.want}. Скрывает: ${q.secret}.`;
+  }
+  function markdown(n){
+    const {identity:i,look:l,voice:v,social:s,intrigue:q}=n;
+    const reactions=ACTIONS.map(a=>`- **${a.label}:** ${REACTIONS[a.id]?.[s.attitude.id]||''}`).join('\n');
+    return `# ${i.name}\n\n> ${D.roles[i.roleKey].label} · ${D.species[i.speciesKey].label} · ${i.age} · ${i.gender==='m'?'мужчина':'женщина'}\n\n**Место:** ${D.scenes[i.sceneKey]?.label} — ${i.sceneDetail}.  \n**Сейчас:** ${i.activity}.\n\n## Быстрый отыгрыш\n- **Манера:** ${s.temperament}\n- **К героям:** ${s.attitude.title}. ${s.attitude.first}\n- **Сиюминутная забота:** ${s.immediate}\n\n## Внешность и повадки\n- ${l.feature}\n- ${l.dress}\n- ${l.gesture}\n\n## Голос и речь\n- **Голос:** ${v.pitch}\n- **Темп:** ${v.tempo}\n- **Речевая особенность:** ${v.quirk.title} — ${v.quirk.hint}\n- **Пример фразы:** «${speechLine(n)}»\n\n## Мотивы\n- **Хочет:** ${s.want}\n- **Боится:** ${s.fear}\n- **Личная граница:** ${s.principle}\n\n## Зацепки (только мастеру)\n- **Скрывает:** ${q.secret}\n- **Может дать:** ${q.offer}\n- **Слух:** ${q.lead}\n\n## Реакции на героев\n${reactions}\n\n## Заметки мастера\n${(n.notes||'').trim()||'_Пока пусто_'}\n`;
+  }
+  async function copyText(value){
+    try {
+      if(!navigator.clipboard?.writeText) throw new Error('Clipboard API unavailable');
+      await navigator.clipboard.writeText(value);
+      notify('Скопировано в буфер обмена');
+    } catch(e) {
+      const node=document.createElement('textarea');
+      node.value=value;node.style.position='fixed';node.style.opacity='0';document.body.appendChild(node);node.focus();node.select();
+      const ok=document.execCommand('copy');node.remove();
+      notify(ok?'Скопировано в буфер обмена':'Не получилось скопировать. Используй экспорт .md');
+    }
+  }
+  function downloadFile(filename,data,type){
+    const blob=new Blob([data],{type});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),3000);
+  }
+  function safeFileName(value){return String(value).replace(/[<>:"/\\|?*\x00-\x1f]/g,'').trim().replace(/\s+/g,'_').slice(0,75)||'NPC';}
+  function exportJson(){
+    const payload={app:'Кузница NPC',version:1,exportedAt:new Date().toISOString(),saved:state.saved};
+    downloadFile('npc-forge-backup.json',JSON.stringify(payload,null,2),'application/json;charset=utf-8');
+    notify(`Экспортировано NPC: ${state.saved.length}`);
+  }
+  async function importJson(file){
+    if(!file)return;
+    if(file.size>5*1024*1024){notify('Файл слишком большой (максимум 5 МБ)');return;}
+    try {
+      const data=JSON.parse(await file.text());
+      const entries=(Array.isArray(data)?data:data.saved);
+      if(!Array.isArray(entries))throw new Error('No saved array');
+      const valid=entries.filter(isValidNpc);
+      if(!valid.length){notify('В этом файле нет подходящих персонажей');return;}
+      const before=state.saved.length;
+      const map=new Map([...state.saved,...valid].map(n=>[n.id,n]));
+      state.saved=Array.from(map.values()).slice(0,500);
+      persist();activeTab='saved';renderLibrary();
+      notify(`Импортировано: ${valid.length}, новых: ${Math.max(0,state.saved.length-before)}`);
+    } catch(err){console.warn('Импорт не удался:',err);notify('Не удалось прочитать JSON базы');}
+    el('importFile').value='';
+  }
+  function bindEvents(){
+    el('generateBtn').addEventListener('click',generate);
+    el('generateAgainBtn').addEventListener('click',generate);
+    el('saveBtn').addEventListener('click',toggleSaved);
+    el('copyBtn').addEventListener('click',()=>copyText(markdown(state.current)));
+    el('mdBtn').addEventListener('click',()=>{downloadFile(safeFileName(state.current.identity.name)+'.md',markdown(state.current),'text/markdown;charset=utf-8');notify('Markdown-файл готов');});
+    el('exportAllBtn').addEventListener('click',exportJson);
+    el('importBtn').addEventListener('click',()=>el('importFile').click());
+    el('importFile').addEventListener('change',e=>importJson(e.target.files?.[0]));
+    el('tabSaved').addEventListener('click',()=>{activeTab='saved';renderLibrary();});
+    el('tabHistory').addEventListener('click',()=>{activeTab='history';renderLibrary();});
+    el('librarySearch').addEventListener('input',renderLibrary);
+    el('characterCard').addEventListener('click',e=>{
+      const reaction=e.target.closest('[data-reaction]');
+      if(reaction){activeReaction=reaction.dataset.reaction;updateReactionUI();return;}
+      const button=e.target.closest('[data-action]');
+      if(!button)return;
+      const part=button.dataset.part;
+      if(button.dataset.action==='lock'){
+        state.locks[part]=!state.locks[part];persist();renderCard();notify(state.locks[part]?'Часть NPC закреплена':'Закрепление снято');
+      } else if(button.dataset.action==='reroll')rerollPart(part);
+    });
+    el('characterCard').addEventListener('input',e=>{
+      if(e.target.id!=='npcNotes')return;
+      state.current.notes=e.target.value;
+      updateSavedIfPresent();persist();
+    });
+    el('libraryList').addEventListener('click',e=>{
+      const remove=e.target.closest('[data-delete]');
+      if(remove){
+        const item=state.saved.find(n=>n.id===remove.dataset.delete);
+        if(item && window.confirm(`Удалить «${item.identity.name}» из сохранённых?`)){
+          state.saved=state.saved.filter(n=>n.id!==item.id);persist();renderAll();notify('Удалено из архива');
+        }
+        return;
+      }
+      const load=e.target.closest('[data-load]');
+      if(load)loadNpc(load.dataset.load);
+    });
+    document.addEventListener('keydown',e=>{
+      const node=e.target;
+      if(e.ctrlKey||e.altKey||e.metaKey||e.shiftKey||node?.matches('input, select, textarea, [contenteditable]'))return;
+      if(e.code==='KeyN' || e.key.toLowerCase()==='n'){e.preventDefault();generate();}
+    });
+  }
+  function init(){
+    safeRead();setupFilters();bindEvents();
+    if(!state.current)generate();
+    else renderAll();
+  }
+  init();
+})();
+
+</script>
+</body>
+</html>
